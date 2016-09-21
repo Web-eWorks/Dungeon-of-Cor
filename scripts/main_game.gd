@@ -12,8 +12,7 @@ func _ready():
 	
 	#setup player
 	get_player().set_translation(get_player().get_translation() + Vector3(0.5, 0, 0.5))
-	get_player().set_health(DUNGEON_MANAGER.player_health)
-	get_player().set_weapon(DUNGEON_MANAGER.last_weapon)
+	DUNGEON_MANAGER.level_start()
 
 
 func get_player():

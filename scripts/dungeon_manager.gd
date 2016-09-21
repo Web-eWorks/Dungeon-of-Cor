@@ -7,6 +7,9 @@ var player_health = 10
 var player_kills = 0
 var last_weapon = 0
 
+#hacky workaround for enemies being killed at the same time
+var num_enemies = 0
+
 #level, [white, black]
 var level_colors = [
 	[1, [Color("558f34"), Color("4a3228")]], #Grass levels
@@ -92,6 +95,10 @@ var music = [
 	[9, "JRPG_battleBoss_loop"]
 ]
 
+func level_start():
+	num_enemies = get_tree().get_nodes_in_group("Enemy").size()
+	get_player().health = player_health
+	get_player().weaponIndex = last_weapon
 
 func next_level():
 	dungeon_level += 1
@@ -124,16 +131,14 @@ func leave_dungeon():
 
 func add_kill():
 	player_kills += 1
+	num_enemies -= 1
 	get_player().get_node("HUD").update_kills()
 
 
-func check_dungeon_end():
-	var enemy_array = get_tree().get_nodes_in_group("Enemy")
-	if enemy_array.size() <= 1:
-		var last_enemy = enemy_array[0]
-		
+func check_dungeon_end(enemy):
+	if num_enemies <= 0:
 		var ladder = preload("res://scenes/objects/ladder.scn").instance()
-		ladder.set_translation(last_enemy.get_translation())
+		ladder.set_translation(enemy.get_translation())
 		get_node("/root/Main/Map").add_child(ladder)
 		
 		return true

@@ -1,7 +1,6 @@
 
 extends KinematicBody
 
-
 var death_blood_scene = preload("res://scenes/effects/death_blood.scn")
 var smoke_scene = preload("res://scenes/effects/smoke.scn")
 
@@ -237,8 +236,8 @@ func _on_Attack_Area_body_exit( body ):
 
 func _on_AI_Damage_Stun_Timer_timeout():
 	if health <= 0:
-		var last_enemy = DUNGEON_MANAGER.check_dungeon_end()
 		DUNGEON_MANAGER.add_kill()
+		var last_enemy = DUNGEON_MANAGER.check_dungeon_end(self)
 		
 		if not last_enemy:
 			var dbe = death_blood_scene.instance()
