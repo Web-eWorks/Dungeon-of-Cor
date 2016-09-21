@@ -5,6 +5,7 @@ extends Node
 var dungeon_level = 1
 var player_health = 10
 var player_kills = 0
+var last_weapon = 0
 
 #level, [white, black]
 var level_colors = [
@@ -94,7 +95,8 @@ var music = [
 
 func next_level():
 	dungeon_level += 1
-	player_health = get_node("/root/Main").get_player().health
+	player_health = get_player().health
+	last_weapon = get_player().weaponIndex
 	get_tree().reload_current_scene()
 
 
@@ -122,7 +124,7 @@ func leave_dungeon():
 
 func add_kill():
 	player_kills += 1
-	get_node("/root/Main").get_player().get_node("HUD").update_kills()
+	get_player().get_node("HUD").update_kills()
 
 
 func check_dungeon_end():
@@ -138,4 +140,6 @@ func check_dungeon_end():
 	
 	return false
 
+func get_player():
+	return get_node("/root/Main").get_player()
 
