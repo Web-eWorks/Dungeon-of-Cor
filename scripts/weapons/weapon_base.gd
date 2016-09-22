@@ -19,7 +19,10 @@ func _ready():
 	_cooldownTimer.connect("timeout", self, "_onCooldownFinished")
 	add_child(_cooldownTimer)
 	
-	HitBox.get_node("CollisionShape").get_shape().set_extents(HitboxSize)
+	var box = BoxShape.new()
+	box.set_extents(HitboxSize)
+	
+	HitBox.get_node("CollisionShape").set_shape(box)
 	HitBox.set_translation( -Vector3(0, 0.05, 0.55 + HitboxSize.z))
 	
 	set_hidden(!Enabled)

@@ -80,10 +80,10 @@ func _input(event):
 			input.attack2 = "release"
 		
 		if event.is_action_pressed("WEAPON_PLUS"):
-			pending_weapon_change = -1
+			pending_weapon_change = 1
 		
 		if event.is_action_pressed("WEAPON_MINUS"):
-			pending_weapon_change = 1
+			pending_weapon_change = -1
 		
 		if event.is_action_pressed("HUD_MAP"):
 			get_node("SamplePlayer").play("button_press")
