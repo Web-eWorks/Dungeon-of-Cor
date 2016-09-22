@@ -47,7 +47,7 @@ func rand_range_int(min_i, max_i):
 
 
 func lookup_value(table, x):
-	#find the value in the table that corrisponds with x
+	#find the value in the table that corresponds with x
 	var cumulative_weight = 0
 	for i in range(table.size()):
 		var weight = table[i]["chance"]

@@ -6,7 +6,7 @@ export var StartingHealth = 10
 
 var health = 10 setget set_health
 
-onready var cameraNode = get_node("Yaw/Camera")
+onready var cameraNode = get_node("Camera")
 onready var animNode = get_node("AnimationPlayer")
 
 var weaponIndex = 0
@@ -21,14 +21,16 @@ var pitch = 0
 
 var holder_sway_ang = Vector3()
 
-var _velocity = Vector3()
-
-var attack_pressed = false
+var input = {
+	attack1 = "released",
+	attack2 = "released",
+}
 
 var is_dead = false
 
 var state = {
 	moving = false,
+	velocity = Vector3()
 }
 
 var anim = "idle"
@@ -61,20 +63,27 @@ func _input(event):
 			
 			holder_sway_ang += Vector3(event.relative_y, event.relative_x, 0)
 			
-			get_node("Yaw").set_rotation(Vector3(0, deg2rad(yaw), 0))
+#			get_node("Yaw").
+			set_rotation(Vector3(0, deg2rad(yaw), 0))
 			cameraNode.set_rotation(Vector3(deg2rad(pitch), 0, 0))
 		
-		if event.is_action_pressed("ATTACK1"):
-			attack_pressed = true
+		if event.is_action_pressed("ATTACK1") and input.attack1 == "released":
+			input.attack1 = "press"
 		
-		if event.is_action_released("ATTACK1"):
-			attack_pressed = false
+		if event.is_action_released("ATTACK1") and input.attack1 == "pressed":
+			input.attack1 = "release"
+		
+		if event.is_action_pressed("ATTACK2") and input.attack2 == "released":
+			input.attack2 = "press"
+		
+		if event.is_action_released("ATTACK2") and input.attack2 == "pressed":
+			input.attack2 = "release"
 		
 		if event.is_action_pressed("WEAPON_PLUS"):
-			pending_weapon_change = 1
+			pending_weapon_change = -1
 		
 		if event.is_action_pressed("WEAPON_MINUS"):
-			pending_weapon_change = -1
+			pending_weapon_change = 1
 		
 		if event.is_action_pressed("HUD_MAP"):
 			get_node("SamplePlayer").play("button_press")
@@ -93,7 +102,7 @@ func _fixed_process(delta):
 	var dir = Vector3()
 	
 	if not is_dead:
-		var aim = get_node("Yaw").get_transform().basis
+		var aim = get_transform().basis #get_node("Yaw").get_transform().basis
 		if movef:
 			dir -= aim.z
 		if moveb:
@@ -107,11 +116,11 @@ func _fixed_process(delta):
 	dir = dir.normalized() * speed
 	
 	if weaponNode.is_attacking:
-		dir *= weaponNode.Stats.MoveSpeedMul
+		dir *= weaponNode.is_attacking.MoveSpeedMul
 	
-	_velocity = _velocity.linear_interpolate(dir, 6 * delta)
+	state.velocity = state.velocity.linear_interpolate(dir, 6 * delta)
 	
-	var motion = move(_velocity * delta)
+	var motion = move(state.velocity * delta)
 	if is_colliding():
 		motion = get_collision_normal().slide(motion)
 		motion.y = 0
@@ -128,18 +137,30 @@ func _process(delta):
 		weaponNode.set_rotation(t_ang)
 		
 		#attack
-		if attack_pressed:
-			weaponNode.do_attack()
+		if input.attack2 == "released":
+			if input.attack1 == "press":
+				weaponNode.start_attack(false)
+				input.attack1 = "pressed"
+			elif input.attack1 == "release":
+				weaponNode.stop_attack()
+				input.attack1 = "released"
+		else:
+			if input.attack2 == "press":
+				weaponNode.start_attack(true)
+				input.attack2 = "pressed"
+			elif input.attack2 == "release":
+				weaponNode.stop_attack()
+				input.attack2 = "released"
 		
 		#animate
 		if !weaponNode.is_attacking:
 			if state.moving:
 				weaponNode.set_animation("walk", 1.1)
-				animNode.play("walk")
+				set_animation("walk")
 			else:
 				weaponNode.set_animation("idle")
-				animNode.play("idle")
-			if pending_weapon_change != false:
+				set_animation("idle")
+			if pending_weapon_change != false and weaponNode.can_attack:
 				set_weapon(weaponIndex + pending_weapon_change)
 				pending_weapon_change = false
 
@@ -153,7 +174,7 @@ func take_damage(amnt):
 	if health <= 0:
 		is_dead = true
 		weaponNode.set_animation("death")
-		get_node("AnimationPlayer").play("death", 1)
+		set_animation("death", 1)
 		get_node("HUD").death_menu()
 		MUSIC.play_music("JRPG_gameOver", false)
 
@@ -168,6 +189,11 @@ func heal(amnt):
 	set_health(min(health + amnt, 10))
 	get_node("SamplePlayer").play("heal")
 	COLOR_MANAGER.animate_white("flash", Color("59b32d"))
+
+func set_animation(name, speed = 1):
+	animNode.set_speed(speed)
+	if name != animNode.get_current_animation():
+		animNode.play(name)
 
 func set_health(amnt):
 	health = amnt

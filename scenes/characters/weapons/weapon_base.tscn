@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://scripts/weapons/weapon_base.gd" type="Script" id=1]
 [ext_resource path="res://sprites/weapons/staff.png" type="Texture" id=2]
 [ext_resource path="res://sounds/swish_2_8bit.smp" type="Sample" id=3]
-[ext_resource path="res://scripts/weapons/weapon_stats.gd" type="Script" id=4]
+[ext_resource path="res://scripts/weapons/attack_melee.gd" type="Script" id=4]
+[ext_resource path="res://scripts/weapons/attack_none.gd" type="Script" id=5]
 
 [sub_resource type="BoxShape" id=1]
 
@@ -34,7 +35,7 @@ tracks/3/type = "method"
 tracks/3/path = NodePath(".")
 tracks/3/interp = 1
 tracks/3/imported = false
-tracks/3/keys = { "times":FloatArray( 0.25, 0.5 ), "transitions":FloatArray( 1, 1 ), "values":[ { "args":[  ], "method":"_eval_hit" }, { "args":[  ], "method":"_onAttackFinished" } ] }
+tracks/3/keys = { "times":FloatArray( 0.25, 0.5 ), "transitions":FloatArray( 1, 1 ), "values":[ { "args":[  ], "method":"do_attack" }, { "args":[  ], "method":"_onAttackFinished" } ] }
 
 [sub_resource type="Animation" id=3]
 
@@ -93,8 +94,8 @@ samples/sword_attack = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 script/script = ExtResource( 1 )
-AttackAnimName = "attack"
 Enabled = true
+HitboxSize = Vector3( 0.5, 0.5, 0.5 )
 
 [node name="Attack Area" type="Area" parent="."]
 
@@ -182,7 +183,7 @@ next/idle = ""
 next/walk = ""
 playback/active = true
 playback/speed = 1.0
-blend_times = [ "attack", "idle", 0.1, "attack", "death", 0.1, "attack", "walk", 0.1, "walk", "idle", 0.1, "walk", "death", 0.1, "walk", "attack", 0.1 ]
+blend_times = [ "attack", "idle", 0.1, "attack", "death", 0.1, "attack", "walk", 0.1, "walk", "idle", 0.1, "walk", "attack", 0.1, "walk", "death", 0.1 ]
 autoplay = "idle"
 
 [node name="WeaponSound" type="SamplePlayer" parent="."]
@@ -202,15 +203,19 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="WeaponStats" type="Node" parent="."]
+[node name="Attack" type="Node" parent="."]
 
 script/script = ExtResource( 4 )
+Enabled = true
+AnimationName = "attack"
 CooldownTime = 0.7
-HitboxSize = Vector3( 0.5, 0.5, 0.75 )
 MoveSpeedMul = 0.5
 BaseDamage = 1.0
 DamageMultiplier = 1.0
-DamageExtra = 0.0
-RangedAttack = false
+DamageOffset = 0.0
+
+[node name="AltAttack" type="Node" parent="."]
+
+script/script = ExtResource( 5 )
 
 

@@ -16,7 +16,8 @@ var level_colors = [
 	[3, [Color("456975"), Color("28354a")]], #Dungeon levels
 	[5, [Color("468f99"), Color("2f2852")]], #Ice levels
 	[7, [Color("322839"), Color("8e2d38")]], #Lava levels
-	[9, [Color("3f5b53"), Color("232237")]]  #Onyx levels
+	#[9, [Color("3f5b53"), Color("232237")]]  #Onyx levels
+	[9, [Color("3d7a99"), Color("151429")]]  #Onyx levels
 ]
 
 #level, [{name, chance, billboard, roation}, ++]
@@ -98,7 +99,7 @@ var music = [
 func level_start():
 	num_enemies = get_tree().get_nodes_in_group("Enemy").size()
 	get_player().health = player_health
-	get_player().weaponIndex = last_weapon
+	get_player().set_weapon(last_weapon)
 
 func next_level():
 	dungeon_level += 1
@@ -127,6 +128,7 @@ func leave_dungeon():
 	dungeon_level = 1
 	player_health = 10
 	player_kills = 0
+	last_weapon = 0
 
 
 func add_kill():
