@@ -160,7 +160,7 @@ func _process(delta):
 			else:
 				weaponNode.set_animation("idle")
 				set_animation("idle")
-			if pending_weapon_change != false and weaponNode.can_attack:
+			if pending_weapon_change != false and !weaponNode.is_attacking:
 				set_weapon(weaponIndex + pending_weapon_change)
 				pending_weapon_change = false
 

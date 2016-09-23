@@ -74,7 +74,8 @@ func on_screen_resized():
 	var minsize = Vector2(1024, 720)
 	var winsize = OS.get_window_size()
 	var newwinsize = Vector2(max(minsize.x, winsize.x), max(minsize.y, winsize.y))
-	OS.set_window_size(newwinsize)
+	if winsize.x < minsize.x or winsize.y < minsize.y:
+		OS.set_window_size(newwinsize)
 	
 	get_node("BackBufferCopy/Color Shader").set_size(newwinsize)
 

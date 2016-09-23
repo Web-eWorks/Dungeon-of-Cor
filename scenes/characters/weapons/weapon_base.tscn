@@ -183,7 +183,7 @@ next/idle = ""
 next/walk = ""
 playback/active = true
 playback/speed = 1.0
-blend_times = [ "attack", "idle", 0.1, "attack", "death", 0.1, "attack", "walk", 0.1, "walk", "idle", 0.1, "walk", "attack", 0.1, "walk", "death", 0.1 ]
+blend_times = [ "attack", "idle", 0.1, "attack", "death", 0.1, "attack", "walk", 0.1, "walk", "idle", 0.1, "walk", "death", 0.1, "walk", "attack", 0.1 ]
 autoplay = "idle"
 
 [node name="WeaponSound" type="SamplePlayer" parent="."]

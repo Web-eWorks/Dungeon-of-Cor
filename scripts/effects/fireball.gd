@@ -1,13 +1,14 @@
 
 extends KinematicBody
 
-export var speed = 8
+export var speed = 7
 export var damage = 3
-export var size_per_second = 0.5
-export var initial_size = 0.9
+export var size_per_second = 1
+export var initial_size = 1
 var direction = Vector3()
 
 var is_active = true
+var is_exploding = false
 
 var smoke_scene = preload("res://scenes/effects/smoke.scn")
 
@@ -37,12 +38,10 @@ func shoot(pos, dir):
 	set_fixed_process(true)
 
 func explode():
+	is_exploding = true
 	var bodies = get_node("Area").get_overlapping_bodies()
-	bodies.append(get_collider())
 	for b in bodies:
-		if b.is_queued_for_deletion() or b == self:
-			continue
-		if b.has_method("take_damage"):
+		if b.has_method("take_damage") and !b.is_queued_for_deletion():
 			b.take_damage(damage)
 	
 	var se = smoke_scene.instance()
@@ -52,4 +51,5 @@ func explode():
 	queue_free()
 
 func take_damage(amnt):
-	explode()
+	if not is_exploding:
+		explode()

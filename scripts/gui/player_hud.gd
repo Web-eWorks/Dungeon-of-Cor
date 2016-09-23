@@ -121,5 +121,3 @@ func _on_Seed_Button_pressed():
 
 func _on_Menu_Button_pressed():
 	get_tree().change_scene("res://scenes/main_menu.scn")
-
-

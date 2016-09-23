@@ -16,6 +16,8 @@ func _ready():
 	for k in GLOBAL.settings.keys():
 		n_settings[k] = GLOBAL.settings[k]
 		get_node("Settings/Container/" + k).set_value(n_settings[k])
+		# because this is a thing that needs to be done.
+		get_node("Settings/Container/" + k).emit_signal("value_changed", n_settings[k])
 
 
 func _notification(what):

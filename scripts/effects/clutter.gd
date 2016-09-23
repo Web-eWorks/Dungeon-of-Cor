@@ -1,9 +1,7 @@
 
 extends Sprite3D
 
-
-onready var ply = get_node("/root/Main").get_player()
-
+onready var ply = DUNGEON_MANAGER.get_player()
 
 func set_clutter_type(table):
 	#[{name, chance, billboard, roation}, ++]
@@ -22,18 +20,13 @@ func set_clutter_type(table):
 	if clutter["rotation"]:
 		set_rotation(Vector3(0, deg2rad(randf() * 360), 0))
 
-
 func _process(delta):
 	var target = ply.get_translation()
 	target.y = get_global_transform().origin.y
 	look_at(target, Vector3(0, 1, 0))
 
-
 func _on_VisibilityNotifier_enter_screen():
 	set_process(true)
 
-
 func _on_VisibilityNotifier_exit_screen():
 	set_process(false)
-
-
