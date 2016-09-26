@@ -9,6 +9,7 @@ export var MoveSpeedMul = 0.5
 
 var can_attack = true
 onready var CooldownTimer = Timer.new()
+onready var weapon = get_parent()
 
 func _ready():
 	CooldownTimer.set_wait_time(CooldownTime)

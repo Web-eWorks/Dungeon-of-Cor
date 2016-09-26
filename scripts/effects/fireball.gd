@@ -1,10 +1,11 @@
 
 extends KinematicBody
 
-export var speed = 7
-export var damage = 3
+export var speed = 7.0
+export var damage = 3.0
 export var size_per_second = 1
 export var initial_size = 1
+
 var direction = Vector3()
 
 var is_active = true
@@ -25,15 +26,21 @@ func _ready():
 
 func _fixed_process(delta):
 	move(direction * speed * delta)
-	overlap_shape.set_radius(overlap_shape.get_radius() + size_per_second * delta)
+	var r = overlap_shape.get_radius()
+	r = r + (r * size_per_second) * delta
+	overlap_shape.set_radius(r)
+	r = ((r - initial_size) / 2) + initial_size
+	get_node("Sprite3D").set_pixel_size(r * 0.032)
 	
 	if is_colliding():
+		# allow physics to catch up.
+		yield(get_tree(), "fixed_frame")
 		explode()
 
-func shoot(pos, dir):
+func shoot(owner, pos, dir):
 	dir.y = 0
 	direction = dir.normalized()
-	set_translation(pos + direction * 1.2)
+	set_translation(pos + direction)
 	
 	set_fixed_process(true)
 

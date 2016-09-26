@@ -16,8 +16,8 @@ onready var weaponNodes = cameraNode.get_children()
 onready var weaponNode = weaponNodes[weaponIndex]
 
 var view_sensitivity = 0.15 setget set_view_sensitivity
-var yaw = 0
-var pitch = 0
+onready var yaw = get_rotation().y
+onready var pitch = cameraNode.get_rotation().x
 
 var holder_sway_ang = Vector3()
 
@@ -30,6 +30,7 @@ var is_dead = false
 
 var state = {
 	moving = false,
+	in_ui = false,
 	velocity = Vector3()
 }
 
@@ -56,69 +57,50 @@ func _ready():
 
 func _input(event):
 	if not is_dead:
-		if event.type == InputEvent.MOUSE_MOTION and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			#pitch and yaw
-			yaw = fmod(yaw - event.relative_x * view_sensitivity, 360)
-			pitch = clamp(pitch - event.relative_y * view_sensitivity, -85, 85)
-			
-			holder_sway_ang += Vector3(event.relative_y, event.relative_x, 0)
-			
-#			get_node("Yaw").
-			set_rotation(Vector3(0, deg2rad(yaw), 0))
-			cameraNode.set_rotation(Vector3(deg2rad(pitch), 0, 0))
+		if not state.in_ui:
+			_do_game_input(event)
 		
-		if event.is_action_pressed("ATTACK1") and input.attack1 == "released":
-			input.attack1 = "press"
-		
-		if event.is_action_released("ATTACK1") and input.attack1 == "pressed":
-			input.attack1 = "release"
-		
-		if event.is_action_pressed("ATTACK2") and input.attack2 == "released":
-			input.attack2 = "press"
-		
-		if event.is_action_released("ATTACK2") and input.attack2 == "pressed":
-			input.attack2 = "release"
-		
-		if event.is_action_pressed("WEAPON_PLUS"):
-			pending_weapon_change = 1
-		
-		if event.is_action_pressed("WEAPON_MINUS"):
-			pending_weapon_change = -1
-		
-		if event.is_action_pressed("HUD_MAP"):
-			get_node("SamplePlayer").play("button_press")
-			get_node("HUD").toggle_map()
+		if event.is_action_pressed("HUD_INV"):
+			get_node("HUD").toggle_inventory()
 	
 	if event.is_action_pressed("HUD_MENU"):
 		get_node("HUD").toggle_menu()
 
+func _do_game_input(event):
+	if event.type == InputEvent.MOUSE_MOTION and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		#pitch and yaw
+		yaw = fmod(yaw - event.relative_x * view_sensitivity, 360)
+		pitch = clamp(pitch - event.relative_y * view_sensitivity, -85, 85)
+		
+		holder_sway_ang += Vector3(event.relative_y, event.relative_x, 0)
+
+	if event.is_action_pressed("ATTACK1") and input.attack1 == "released":
+		input.attack1 = "press"
+	
+	if event.is_action_released("ATTACK1") and input.attack1 == "pressed":
+		input.attack1 = "release"
+	
+	if event.is_action_pressed("ATTACK2") and input.attack2 == "released":
+		input.attack2 = "press"
+	
+	if event.is_action_released("ATTACK2") and input.attack2 == "pressed":
+		input.attack2 = "release"
+	
+	if event.is_action_pressed("WEAPON_PLUS"):
+		pending_weapon_change = 1
+	
+	if event.is_action_pressed("WEAPON_MINUS"):
+		pending_weapon_change = -1
+	
+	if event.is_action_pressed("HUD_MAP"):
+		get_node("HUD").toggle_map()
+
 
 func _fixed_process(delta):
-	var movef = Input.is_action_pressed("MOVE_FOWARD")
-	var moveb = Input.is_action_pressed("MOVE_BACK")
-	var mover = Input.is_action_pressed("MOVE_RIGHT")
-	var movel = Input.is_action_pressed("MOVE_LEFT")
-	
-	var dir = Vector3()
-	
-	if not is_dead:
-		var aim = get_transform().basis #get_node("Yaw").get_transform().basis
-		if movef:
-			dir -= aim.z
-		if moveb:
-			dir += aim.z
-		if mover:
-			dir += aim.x
-		if movel:
-			dir -= aim.x
-	
-	dir.y = 0
-	dir = dir.normalized() * speed
-	
-	if weaponNode.is_attacking:
-		dir *= weaponNode.is_attacking.MoveSpeedMul
-	
-	state.velocity = state.velocity.linear_interpolate(dir, 6 * delta)
+	if state.in_ui:
+		state.velocity = state.velocity.linear_interpolate(Vector3(), speed * delta)
+	else:
+		_do_move(delta)
 	
 	var motion = move(state.velocity * delta)
 	if is_colliding():
@@ -126,7 +108,33 @@ func _fixed_process(delta):
 		motion.y = 0
 		move(motion)
 	
-	state.moving = movef or moveb or mover or movel
+	state.moving = state.velocity.length() >= 1
+	
+	set_rotation(Vector3(0, deg2rad(yaw), 0))
+	cameraNode.set_rotation(Vector3(deg2rad(pitch), 0, 0))
+
+func _do_move(delta):
+	var dir = Vector3()
+	
+	if not is_dead:
+		var aim = get_transform().basis
+		
+		if Input.is_action_pressed("MOVE_FORWARD"):
+			dir -= aim.z
+		if Input.is_action_pressed("MOVE_BACK"):
+			dir += aim.z
+		if Input.is_action_pressed("MOVE_LEFT"):
+			dir -= aim.x
+		if Input.is_action_pressed("MOVE_RIGHT"):
+			dir += aim.x
+	
+	dir.y = 0
+	dir = dir.normalized() * speed
+	
+	if weaponNode.is_attacking:
+		dir *= weaponNode.is_attacking.MoveSpeedMul
+	
+	state.velocity = state.velocity.linear_interpolate(dir, speed * delta)
 
 func _process(delta):
 	if not is_dead:

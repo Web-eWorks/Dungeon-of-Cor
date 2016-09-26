@@ -182,7 +182,8 @@ func do_attack():
 				
 			else:
 				var fireball = preload("res://scenes/effects/fireball.scn").instance()
-				fireball.shoot(get_translation() + Vector3(0, 1, 0), ply.get_translation() - get_translation())
+				var start = get_translation() - get_node("Yaw").get_global_transform().basis.z.normalized()
+				fireball.shoot(self, start + Vector3(0,1,0), ply.get_translation() - start)
 				get_parent().add_child(fireball)
 
 

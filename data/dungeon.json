@@ -1,0 +1,78 @@
+[
+	[1, {
+		"size": [7, 9],
+		"num_monsters": [1, 2],
+		"monsters": [
+			["mushroom", 50],
+			["bat", 40],
+			["rogue", 10]
+		],
+		"num_items": [0, 1],
+		"items": [
+			["health", 100]
+		],
+		"clutter": [
+			["grass", 50],
+			["flower", 50]
+		]
+	} ],
+	[3, {
+		"inherit": 1,
+		"size": [5, 7],
+		"num_monsters": [1, 3],
+		"monsters": [
+			["rogue", 30],
+			["goblin", 50],
+			["bat", 20]
+		],
+		"num_items": [0, 1],
+		"items": [
+			["health", 100]
+		],
+		"clutter": [
+			["bricks", 30],
+			["pot", 20],
+			["pot_broken", 20],
+			["bone", 30]
+		]
+	} ],
+	[5, {
+		size = [5, 7],
+		num_monsters = [1, 3],
+		monsters = [
+			{name = "rogue", chance = 30},
+			{name = "goblin", chance = 50},
+			{name = "bat", chance = 20}
+		],
+		num_items = [0, 1],
+		items = [
+			{name = "health", chance = 100}
+		]
+	} ],
+	[7, {
+		size = [5, 7],
+		num_monsters = [1, 3],
+		monsters = [
+			{name = "rogue", chance = 30},
+			{name = "goblin", chance = 50},
+			{name = "bat", chance = 20}
+		],
+		num_items = [0, 1],
+		items = [
+			{name = "health", chance = 100}
+		]
+	} ],
+	[9, {
+		size = [5, 7],
+		num_monsters = [1, 3],
+		monsters = [
+			{name = "rogue", chance = 30},
+			{name = "goblin", chance = 50},
+			{name = "bat", chance = 20}
+		],
+		num_items = [0, 1],
+		items = [
+			{name = "health", chance = 100}
+		]
+	} ],
+]

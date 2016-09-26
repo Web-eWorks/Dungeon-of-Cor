@@ -10,5 +10,7 @@ func do_attack():
 	var proj = load(Projectile).instance()
 	proj.speed = ProjectileSpeed
 	proj.damage = ProjectileDamage
-	proj.shoot(player.get_translation() + Vector3(0, 1, 0), -player.get_transform().basis.z)
+	var start = player.get_translation() + Vector3(0, 1, 0)
+	var dir = -player.get_transform().basis.z
+	proj.shoot(player, start + dir.normalized() * proj.initial_size, dir)
 	player.get_parent().add_child(proj)

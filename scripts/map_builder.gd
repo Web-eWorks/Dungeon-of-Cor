@@ -94,7 +94,9 @@ func make_map():
 					create_v_tunnel(prev_room_pos.y, new_room_pos.y, prev_room_pos.x)
 					create_h_tunnel(prev_room_pos.x, new_room_pos.x, new_room_pos.y)
 				
-				place_objects(new_room)
+				place_enemies(new_room)
+			
+			place_objects(new_room)
 			
 			rooms.append(new_room)
 			num_rooms += 1
@@ -103,7 +105,7 @@ func make_map():
 	DUNGEON_MANAGER.update_dungeon()
 
 
-func place_objects(room):
+func place_enemies(room):
 	#place enemies
 	var monster_per_room = DUNGEON_MANAGER.from_dungeon_level(DUNGEON_MANAGER.monster_per_room)
 	var num_of_monsters = GLOBAL.rand_range_int(monster_per_room[0], monster_per_room[1])
@@ -117,7 +119,8 @@ func place_objects(room):
 		var new_obj = load("res://scenes/characters/" + ran_mon + ".scn").instance()
 		set_map_pos(new_obj, Vector2(x, y))
 		owner.get_node("Map").add_child(new_obj)
-	
+
+func place_objects(room):
 	#place clutter
 	var num_of_clutter = GLOBAL.rand_range_int(2, floor(room.get_area() * 0.125))
 	var clutter_types = DUNGEON_MANAGER.from_dungeon_level(DUNGEON_MANAGER.clutter)
@@ -171,6 +174,9 @@ func update_grid_map():
 	for x in range(MAP_WIDTH):
 		for y in range(MAP_HEIGHT):
 			owner.get_node("Map/GridMap").set_cell_item(x, 0, y, map[x][y].type)
+
+func update_map_tile(pos):
+	owner.get_node("Map/GridMap").set_cell_item(pos.x, 0, pos.y, map[pos.x][pos.y].type)
 
 
 func set_map_pos(obj, pos):

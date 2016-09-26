@@ -8,6 +8,10 @@ onready var player_sprite = get_node("Map Popup/2DMap/TileMap/Player Sprite")
 var map_vis_rect = Rect2(0, 0, 11, 11)
 var old_ply_pos = Vector2()
 
+onready var mapPop = get_node("Map Popup")
+onready var menuPop = get_node("Menu Popup")
+onready var invPop = get_node("Inventory Popup")
+onready var soundPlayer = get_node("SamplePlayer")
 
 func _ready():
 	#set_health(DUNGEON_MANAGER.player_health)
@@ -43,39 +47,51 @@ func _process(delta):
 
 
 func death_menu():
-	if get_node("Map Popup").is_visible():
-		get_node("Map Popup").hide()
+	if mapPop.is_visible():
+		mapPop.hide()
 	
-	get_node("Menu Popup/Container/Label").set_text("You died")
-	get_node("Menu Popup").popup_centered()
+	menuPop.get_node("Container/Label").set_text("You died")
+	menuPop.popup_centered()
 	CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_VISIBLE)
 
 
 func toggle_map():
-	if get_node("Map Popup").is_visible():
-		get_node("Map Popup").hide()
+	if mapPop.is_visible():
+		mapPop.hide()
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
-	else:
-		get_node("Map Popup").popup_centered()
+	elif not menuPop.is_visible():
+		mapPop.popup_centered()
 		
-		if get_node("Menu Popup").is_visible():
-			get_node("Menu Popup").hide()
-		
+		play_sound("button_press")
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED_HIDDEN)
 
 
 func toggle_menu():
-	if get_node("Menu Popup").is_visible():
-		get_node("Menu Popup").hide()
+	if menuPop.is_visible():
+		menuPop.hide()
+		owner.state.in_ui = false
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
 	else:
-		get_node("Menu Popup").popup_centered()
-		
-		if get_node("Map Popup").is_visible():
-			get_node("Map Popup").hide()
+		menuPop.popup_centered()
+		owner.state.in_ui = true
+		if mapPop.is_visible():
+			mapPop.hide()
+		if invPop.is_visible():
+			invPop.hide()
 		
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_VISIBLE)
 
+func toggle_inventory():
+	if invPop.is_visible():
+		invPop.hide()
+		owner.state.in_ui = false
+		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
+	elif not menuPop.is_visible():
+		invPop.popup_centered()
+		owner.state.in_ui = true
+		play_sound("button_press")
+		
+		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_VISIBLE)
 
 func update_map():
 	var plypos = MAP_MANAGER.get_map_pos(owner.get_translation())
@@ -106,6 +122,8 @@ func update_kills():
 func set_health(amnt, maxhp=10):
 	get_node("Healthbar").set_value((amnt / float(maxhp)) * 100)
 
+func play_sound(name):
+	soundPlayer.play(name)
 
 func _on_Map_Popup_popup_hide():
 	CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
