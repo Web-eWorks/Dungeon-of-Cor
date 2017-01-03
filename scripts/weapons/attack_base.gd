@@ -4,7 +4,7 @@ extends Node
 export var Enabled = true
 export var AnimationName = "attack"
 
-export var CooldownTime = 0.7
+export var CooldownTime = 0.2
 export var MoveSpeedMul = 0.5
 
 var can_attack = true
@@ -17,9 +17,14 @@ func _ready():
 	add_child(CooldownTimer)
 
 func start_attack():
-	CooldownTimer.start()
 	can_attack = false
-	get_parent().set_animation(AnimationName, 1)
+	# Directly start the animation, as set_animation() may fail
+	# due to the old animation not being cleared yet
+	get_parent().AnimPlayer.set_speed(1)
+	get_parent().AnimPlayer.play(AnimationName)
+
+func attack_finished():
+	CooldownTimer.start()
 
 func _onCooldownFinished():
 	can_attack = true

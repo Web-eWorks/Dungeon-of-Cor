@@ -1,6 +1,7 @@
 
 extends "attack_base.gd"
 
+export var Hitbox = Vector3(.5, .5, .5)
 export var BaseDamage = 1.0
 
 func do_attack():
