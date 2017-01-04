@@ -1,5 +1,5 @@
 
-extends "/scripts/objects/object_base.gd"
+extends "res:///scripts/objects/object_base.gd"
 
 func _ready():
 	connect("body_enter", self, "_onBodyEnter")

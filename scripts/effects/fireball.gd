@@ -1,16 +1,10 @@
 
-extends KinematicBody
+extends "res:///scripts/weapons/projectiles/base.gd"
 
-export var speed = 7.0
-export var damage = 3.0
-export var size_per_second = 1
+export var size_per_second = .6
 export var initial_size = 1
 
-var direction = Vector3()
-
-var is_active = true
 var is_exploding = false
-
 var smoke_scene = preload("res://scenes/effects/smoke.scn")
 
 onready var Overlap = get_node("Area/Overlap")
@@ -25,26 +19,17 @@ func _ready():
 		queue_free()
 
 func _fixed_process(delta):
-	move(direction * speed * delta)
 	var r = overlap_shape.get_radius()
 	r = r + (r * size_per_second) * delta
 	overlap_shape.set_radius(r)
 	r = ((r - initial_size) / 2) + initial_size
 	get_node("Sprite3D").set_pixel_size(r * 0.032)
-	
-	if is_colliding():
-		# allow physics to catch up.
-		yield(get_tree(), "fixed_frame")
-		explode()
 
 func shoot(owner, pos, dir):
 	dir.y = 0
-	direction = dir.normalized()
-	set_translation(pos + direction)
-	
-	set_fixed_process(true)
+	.shoot(owner, pos, dir)
 
-func explode():
+func on_collide():
 	is_exploding = true
 	var bodies = get_node("Area").get_overlapping_bodies()
 	for b in bodies:
@@ -59,4 +44,4 @@ func explode():
 
 func take_damage(amnt):
 	if not is_exploding:
-		explode()
+		on_collide()
