@@ -130,11 +130,13 @@ func leave_dungeon():
 	player_kills = 0
 	last_weapon = 0
 
+signal on_enemy_killed
 
 func add_kill():
 	player_kills += 1
 	num_enemies -= 1
-	get_player().get_node("HUD").update_kills()
+	emit_signal("on_enemy_killed")
+#	get_player().get_node("HUD").update_kills()
 
 
 func check_dungeon_end(enemy):

@@ -1,7 +1,6 @@
 
 extends Control
 
-
 onready var owner = get_parent()
 onready var player_sprite = get_node("Map Popup/2DMap/TileMap/Player Sprite")
 
@@ -10,15 +9,10 @@ var old_ply_pos = Vector2()
 
 onready var mapPop = get_node("Map Popup")
 onready var menuPop = get_node("Menu Popup")
-onready var invPop = get_node("Inventory Popup")
+onready var playerPop = get_node("Player Popup")
 onready var soundPlayer = get_node("SamplePlayer")
 
 func _ready():
-	#set_health(DUNGEON_MANAGER.player_health)
-	get_node("Menu Popup/Container/Seed/Seed Button").set_text(str(MAP_MANAGER.current_seed))
-	get_node("Menu Popup/Container/Dungeon Floor").set_text("Floor: " + str(DUNGEON_MANAGER.dungeon_level))
-	update_kills()
-	
 	for x in range(MAP_MANAGER.MAP_WIDTH):
 		for y in range(MAP_MANAGER.MAP_HEIGHT):
 			get_node("Map Popup/2DMap/TileMap").set_cell(x, y, 0)
@@ -76,22 +70,23 @@ func toggle_menu():
 		owner.state.in_ui = true
 		if mapPop.is_visible():
 			mapPop.hide()
-		if invPop.is_visible():
-			invPop.hide()
+		if playerPop.is_visible():
+			playerPop.hide()
 		
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_VISIBLE)
 
 func toggle_inventory():
-	if invPop.is_visible():
-		invPop.hide()
+	if playerPop.is_visible():
+		playerPop.hide()
 		owner.state.in_ui = false
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
 	elif not menuPop.is_visible():
-		invPop.popup_centered()
+		playerPop.popup_centered()
 		owner.state.in_ui = true
 		play_sound("button_press")
 		
 		CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_VISIBLE)
+
 
 func update_map():
 	var plypos = MAP_MANAGER.get_map_pos(owner.get_translation())
@@ -115,15 +110,13 @@ func update_map():
 					get_node("Map Popup/2DMap/TileMap").set_cell(x, y, 2)
 
 
-func update_kills():
-	get_node("Menu Popup/Container/Player Kills").set_text("Kills: " + str(DUNGEON_MANAGER.player_kills))
-
-
 func set_health(amnt, maxhp=10):
 	get_node("Healthbar").set_value((amnt / float(maxhp)) * 100)
 
+
 func play_sound(name):
 	soundPlayer.play(name)
+
 
 func _on_Map_Popup_popup_hide():
 	CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
@@ -132,10 +125,3 @@ func _on_Map_Popup_popup_hide():
 func _on_Menu_Popup_popup_hide():
 	CURSOR.set_cursor_mode(CURSOR.CURSOR_TYPE_CAPTURED)
 
-
-func _on_Seed_Button_pressed():
-	OS.set_clipboard(str(MAP_MANAGER.current_seed))
-
-
-func _on_Menu_Button_pressed():
-	get_tree().change_scene("res://scenes/main_menu.scn")
