@@ -1,0 +1,14 @@
+[gd_resource type="CanvasItemMaterial" load_steps=2 format=1]
+
+[sub_resource type="CanvasItemShaderGraph" id=1]
+
+_code = { "fragment":"vec3 nd1sl3=vec3(SCREEN_UV,0);\nuniform color Color_White=vec4(1,1,1,1);\nvec3 nd5sl0=Color_White.rgb;\nfloat nd5sl1=Color_White.a;\nvec3 nd2sl0=texscreen(nd1sl3.xy);\nvec3 nd3sl0;\n{\n\tvec3 c = nd2sl0;\n\tvec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n\tvec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n\tvec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n\tfloat d = q.x - min(q.w, q.y);\n\tfloat e = 1.0e-10;\n\tnd3sl0=vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n}\nfloat nd4sl0=nd3sl0.x;\nfloat nd4sl1=nd3sl0.y;\nfloat nd4sl2=nd3sl0.z;\nvec3 nd10sl0=nd5sl0*nd4sl2;\nuniform color Color_Black=vec4(0,0,0,1);\nvec3 nd6sl0=Color_Black.rgb;\nfloat nd6sl1=Color_Black.a;\nfloat nd8sl0def=1;\nfloat nd8sl0=nd8sl0def-nd4sl2;\nvec3 nd9sl0=nd6sl0*nd8sl0;\nvec3 nd7sl0=nd10sl0+nd9sl0;\nCOLOR.rgb=nd7sl0;\n", "fragment_ofs":0, "light":"", "light_ofs":0, "vertex":"", "vertex_ofs":0 }
+_data = { "shaders":[ [ 0, 33, Vector2( 350, 40 ), null, null, [  ], 1, 0, Vector2( 50, 40 ), null, null, [  ] ], [ 0, 33, Vector2( 1022, 41 ), null, null, [ 0, 7, 0 ], 1, 0, Vector2( 50, 40 ), null, null, [  ], 2, 6, Vector2( 162, 80 ), null, [ 0, 0 ], [ 0, 1, 3, 2147483647, 0, null ], 3, 15, Vector2( 274, 60 ), 4, null, [ 0, 2, 0, 2147483647, 0, null ], 4, 18, Vector2( 405, 64 ), null, null, [ 0, 3, 0, 2147483647, 0, null ], 5, 28, Vector2( 631, -132 ), "Color_White", Color( 1, 1, 1, 1 ), [  ], 6, 28, Vector2( 681, 104 ), "Color_Black", Color( 0, 0, 0, 1 ), [  ], 7, 8, Vector2( 919, 3 ), 0, null, [ 0, 10, 0, 1, 9, 0, 2147483647, 0, null, 2147483647, 1, null ], 8, 7, Vector2( 700, 234 ), 1, null, [ 1, 4, 2, 2147483647, 0, 1.0, 2147483647, 1, null ], 9, 9, Vector2( 818, 211 ), 0, null, [ 0, 6, 0, 1, 8, 0, 2147483647, 0, null, 2147483647, 1, null ], 10, 9, Vector2( 757, -90 ), 0, null, [ 0, 5, 0, 1, 4, 2, 2147483647, 0, null, 2147483647, 1, null ] ], [ 0, 33, Vector2( 350, 40 ), null, null, [  ], 1, 0, Vector2( 50, 40 ), null, null, [  ] ] ] }
+
+[resource]
+
+shader/shader = SubResource( 1 )
+shader/shading_mode = 0
+shader_param/Color_White = Color( 1, 1, 1, 1 )
+shader_param/Color_Black = Color( 0, 0, 0, 1 )
+
